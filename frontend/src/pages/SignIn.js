@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import logo from "../img/logo.png"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link ,useNavigate} from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const API_URL = window.location.origin.replace("3000", "5000")
+const API_URL = window.location.origin.replace("3000", "4000")
 
 export default function SignIn() {
-
+    const navigate = useNavigate()
+const {login} = useAuth()
     const [email, setEmail] = useState("")
 
     const [password, setPassword] = useState("")
-    const { login } = useAuth();
-    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
         signin()
+
     }
 
     const signin = async () => {
@@ -39,8 +40,8 @@ export default function SignIn() {
             if (response.ok) {
                 toast.success(data.message);
                 if (data.token) {
-                    login(data.token);
-                    navigate("/");
+                    login(data)
+                    navigate("/")
                 }
 
                 setEmail("")

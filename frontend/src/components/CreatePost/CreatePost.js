@@ -5,8 +5,8 @@ import { supabase } from "../../services/supabaseClientMock";
 
 Modal.setAppElement(document.getElementById("root"))
 
-const CreatePost = ({ closeModal,onNewPost }) => {
-    const API_URL = window.location.origin.replace("3000", "5000")
+const CreatePost = ({ closeModal }) => {
+    const API_URL = window.location.origin.replace("3000", "4000")
     const [selectedImage, setSelectedImage] = useState(null)
     const [caption, setCaption] = useState('')
     const [hashtag, setHashtag] = useState('')
@@ -18,34 +18,34 @@ const CreatePost = ({ closeModal,onNewPost }) => {
     }
 
     const handleShare = async () => {
-        if (selectedImage && caption && hashtag) {
-            try {
-                const response = await fetch(`${API_URL}/api/posts/create`, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        image: selectedImage,
-                        caption,
-                        hashtags: hashtag
-                    })
+       if(selectedImage && caption && hashtag){
+        try{
+            const response = await fetch(`${API_URL}/api/posts/create`,{
+                method:"POST",
+                headers:{
+                    "Authorization":`Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    image:selectedImage,
+                    caption,
+                    hashtags:hashtag
                 })
+            })
 
-                if (!response.ok) {
-                    throw new Error(response.statusText)
-                }
-
-                await response.json()
-                closeModal();
-                onNewPost();
-            } catch (error) {
-                console.error(error)
+            if(!response.ok){
+                throw new Error(response.statusText)
             }
-        } else {
-            console.warn("Please provide all the fields")
+
+            await response.json()
+            closeModal()
+
+        }catch(error){
+console.error(error)
         }
+       }else{
+        console.warn("Please provide all the fields")
+       }
     }
 
     const handleUpload = async (image) => {
@@ -62,9 +62,9 @@ const CreatePost = ({ closeModal,onNewPost }) => {
                 .from('images')
                 .getPublicUrl(data.path);
 
-
-            setSelectedImage(urlInfo.data.publicUrl)
-            console.log("File Link Retirieved Successfull : ", urlInfo.data.publicUrl)
+                
+                setSelectedImage(urlInfo.data.publicUrl)
+                console.log("File Link Retirieved Successfull : " , urlInfo.data.publicUrl)
         }
 
 

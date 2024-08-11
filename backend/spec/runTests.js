@@ -18,6 +18,7 @@ require('./createPostSpec.js');
 require('./authorizeUserSpec.js');
 require('./getAllPostSpec.js');
 require("./getProfileSpec.js")
+require("./likeUnlikeSpec.js")
 
 // Run the tests
 jasmine.execute();

@@ -14,7 +14,8 @@ describe("FeedCard Component", () => {
     mutualFrndImg1: "https://via.placeholder.com/50",
     mutualFrndImg2: "https://via.placeholder.com/50",
     commentCount: 20,
-    caption: "Enjoying the sunset!"
+    caption: "Enjoying the sunset!",
+    likedByUserIds: [1]
   };
 
   it("[REQ014]_renders_FeedCard_component_with_feed_data", () => {
