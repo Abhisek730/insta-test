@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { FaRegSmile, FaArrowLeft, FaTimes } from "react-icons/fa";
 
-Modal.setAppElement("#root");
+Modal.setAppElement(document.getElementById("root"))
 
 const PostDetailModal = ({
     isOpen,
@@ -16,11 +16,6 @@ const PostDetailModal = ({
     const API_URL = window.location.origin.replace("3000", "5000");
     const [comments, setComments] = useState([]);
  
-
-    function addComment(){
-
-    }
-
 
     useEffect(() => {
         const fetchComments = async () => {
