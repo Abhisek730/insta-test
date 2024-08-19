@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PostDetailModal from "./PostDetailModal"; // Adjust the path as necessary
+import PostDetailModal from "../Feed/PostDetailPage/PostDetailPage";
 
 const ProfilePosts = ({ posts }) => {
     const [selectedPost, setSelectedPost] = useState(null);
