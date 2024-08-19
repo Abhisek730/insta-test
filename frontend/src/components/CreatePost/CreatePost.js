@@ -7,7 +7,7 @@ import { supabase } from "../../services/supabaseClientMock";
 Modal.setAppElement(document.getElementById("root"))
 
 const CreatePost = ({ closeModal,updateNewPost }) => {
-    const API_URL = window.location.origin.replace("3000", "5000")
+    const API_URL = window.location.origin.replace("3000", "4000")
     const [selectedImage, setSelectedImage] = useState(null)
     const [caption, setCaption] = useState('')
     const [hashtag, setHashtag] = useState('')

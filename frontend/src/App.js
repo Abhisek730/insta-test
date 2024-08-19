@@ -3,6 +3,7 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import AppLayout from "./pages/AppLayout";
 import { BrowserRouter, Routes, Route,Navigate } from "react-router-dom";
 import { AuthProvider,useAuth } from "./context/AuthContext";
@@ -20,6 +21,7 @@ function RoutesComponent(){
         <Route path="/" element= {isAuthenticated ? <AppLayout /> : <Navigate to= "/signin"/>}>
           <Route path="/" element={<Home />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/profile/:username" element={<UserProfile />} />
         </Route>
         <Route path="/signup" element={isAuthenticated ?  <Navigate to= "/"/> : <SignUp />}></Route>
         <Route path="/signin" element={isAuthenticated ?  <Navigate to= "/"/> : <SignIn />}></Route>

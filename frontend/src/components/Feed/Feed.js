@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import FeedCard from "./FeedCard/FeedCard";
 
 const Feed = ({newPost,updateNewPost}) => {
-    const API_URL = window.location.origin.replace("3000", "5000")
+    const API_URL = window.location.origin.replace("3000", "4000")
     const [feeds, setFeeds] = useState([]);
     const [currentUserId,setCurrentUserId]=useState(null)
     useEffect(() => {

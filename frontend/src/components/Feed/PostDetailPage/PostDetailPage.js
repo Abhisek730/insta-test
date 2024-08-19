@@ -5,7 +5,7 @@ Modal.setAppElement(document.getElementById("root"))
 
 function PostDetailPage({ isPostDetailModal, onClose, feed, handleAddComment, newComment, setNewComment, updateNewComment }) {
     const [comments, setComments] = useState([])
-    const API_URL = window.location.origin.replace("3000", "5000")
+    const API_URL = window.location.origin.replace("3000", "4000")
     useEffect(() => {
         const fetchComments = async () => {
             if (isPostDetailModal) {
