@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const { User, Follow } = require("../models");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
@@ -61,4 +61,98 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser }
+const followUser = async (req, res) => {
+    try {
+        const { followeeId } = req.body;
+        const followerId = req.user.id;
+
+        if (followerId === followeeId) {
+            return res.status(400).json({ message: "You cannot follow yourself" });
+        }
+
+        const existingFollow = await Follow.findOne({
+            where: { followerId, followeeId }
+        });
+
+        if (existingFollow) {
+            return res.status(400).json({ message: "You are already following this user" });
+        }
+
+        await Follow.create({ followerId, followeeId });
+        res.status(200).json({ message: "User followed successfully" });
+    } catch (error) {
+        console.error("Error following user:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+const unfollowUser = async (req, res) => {
+    try {
+        const { followeeId } = req.body;
+        const followerId = req.user.id;
+
+        const existingFollow = await Follow.findOne({
+            where: { followerId, followeeId }
+        });
+
+        if (!existingFollow) {
+            return res.status(400).json({ message: "You are not following this user" });
+        }
+
+        await existingFollow.destroy();
+        res.status(200).json({ message: "User unfollowed successfully" });
+    } catch (error) {
+        console.error("Error unfollowing user:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+const getFollowers = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId, {
+            include: {
+                model: User,
+                as: "Followers",
+                attributes: ["id", "username", "fullname"],
+                through: { attributes: [] }
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.Followers);
+    } catch (error) {
+        console.error("Error fetching followers:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+const getFollowing = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId, {
+            include: {
+                model: User,
+                as: "Following",
+                attributes: ["id", "username", "fullname"],
+                through: { attributes: [] }
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.Following);
+    } catch (error) {
+        console.error("Error fetching following:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+module.exports = { registerUser, loginUser, followUser, unfollowUser, getFollowers, getFollowing }
