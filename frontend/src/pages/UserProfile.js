@@ -5,7 +5,7 @@ import ProfilePosts from "../components/Profile/ProfilePosts";
 import { useParams } from "react-router-dom";
 
 const UserProfile = () => {
-    const { username } = useParams(); // Get username from URL
+    const { username } = useParams(); 
     const API_URL = window.location.origin.replace("3000", "4000");
     const [profileData, setProfileData] = useState();
 
@@ -39,7 +39,7 @@ const UserProfile = () => {
         <div className="max-w-4xl w-full lg:w-[70%] h-auto mx-auto mt-9 mb-9 pt-9 ">
             {profileData && (
                 <>
-                    <ProfileHeader username={profileData.user.username} postCount={profileData.posts.length} />
+                    <ProfileHeader username={profileData.user.username} userId={profileData.user.id} postCount={profileData.posts.length} />
                     <ProfileBio fullname={profileData.user.fullname} />
                     <ProfilePosts posts={profileData.posts} />
                 </>
