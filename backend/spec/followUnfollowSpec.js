@@ -35,7 +35,7 @@ describe('Profile and Follow/Unfollow API', () => {
     });
 
     describe('GET /api/users/profile/:username', () => {
-        it('[REQ047]_fetch_user_profile_by_username_successfully', async () => {
+        it('[REQ058]_fetch_user_profile_by_username_successfully', async () => {
             const response = await request(app)
                 .get(`/api/users/profile/${otherUser.username}`)
                 .set('Authorization', `Bearer ${token}`);
@@ -46,7 +46,7 @@ describe('Profile and Follow/Unfollow API', () => {
             expect(response.body.posts.length).toBe(1);
         });
 
-        it('[REQ048]_fetch_non_existing_user_profile', async () => {
+        it('[REQ059]_fetch_non_existing_user_profile', async () => {
             const response = await request(app)
                 .get('/api/users/profile/nonexistentuser')
                 .set('Authorization', `Bearer ${token}`);
@@ -58,7 +58,7 @@ describe('Profile and Follow/Unfollow API', () => {
     });
 
     describe('POST /api/users/follow', () => {
-        it('[REQ049]_follow_user_successfully', async () => {
+        it('[REQ060]_follow_user_successfully', async () => {
             const response = await request(app)
                 .post(`/api/users/follow/${otherUser.id}`)
                 .set('Authorization', `Bearer ${token}`)
@@ -69,11 +69,11 @@ describe('Profile and Follow/Unfollow API', () => {
             expect(response.body.message).toBe('Successfully followed the user');
         });
 
-    
+
     });
 
     describe('POST /api/users/unfollow', () => {
-        it('[REQ051]_unfollow_user_successfully', async () => {
+        it('[REQ061]_unfollow_user_successfully', async () => {
             const response = await request(app)
                 .post(`/api/users/unfollow/${otherUser.id}`)
                 .set('Authorization', `Bearer ${token}`)
@@ -84,6 +84,6 @@ describe('Profile and Follow/Unfollow API', () => {
             expect(response.body.message).toBe('Successfully unfollowed the user');
         });
 
-     
+
     });
 });
