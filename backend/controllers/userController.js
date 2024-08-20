@@ -86,6 +86,33 @@ const followUser = async (req, res) => {
     }
 };
 
+
+
+// const followUser = async (req, res) => {
+//     try {
+//         const { followeeId } = req.body;
+//         const followerId = req.user.id;
+
+//         if (followerId === followeeId) {
+//             return res.status(400).json({ message: "You cannot follow yourself" });
+//         }
+
+//         const existingFollow = await Follow.findOne({
+//             where: { followerId, followeeId }
+//         });
+
+//         if (existingFollow) {
+//             return res.status(400).json({ message: "You are already following this user" });
+//         }
+
+//         await Follow.create({ followerId, followeeId });
+//         res.status(200).json({ message: "User followed successfully" });
+//     } catch (error) {
+//         console.error("Error following user:", error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// };
+
 const unfollowUser = async (req, res) => {
     try {
         const { followeeId } = req.body;

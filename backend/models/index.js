@@ -21,20 +21,8 @@ Comment.belongsTo(User,{foreignKey:"userId",as:"postedBy"})
 Post.hasMany(Comment,{foreignKey:"postId",as:"comments"});
 Comment.belongsTo(Post,{foreignKey:"postId",as:"post"});
 
-
-User.belongsToMany(User, {
-    through: Follow,
-    as: 'Followers',
-    foreignKey: 'followeeId',
-    otherKey: 'followerId'
-});
-
-User.belongsToMany(User, {
-    through: Follow,
-    as: 'Following',
-    foreignKey: 'followerId',
-    otherKey: 'followeeId'
-});
+User.belongsToMany(User, { through: Follow, as: 'Followers', foreignKey: 'followeeId' });
+User.belongsToMany(User, { through: Follow, as: 'Following', foreignKey: 'followerId' });
 
 module.exports = {
     sequelize,

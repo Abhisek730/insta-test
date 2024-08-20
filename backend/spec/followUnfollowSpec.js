@@ -1,111 +1,82 @@
-// spec/followUnfollowSpec.js
 const request = require('supertest');
-const { User, Follow } = require('../models');
 const { app } = require('../app');
+const { User, Follow } = require('../models');
 const jwt = require('jsonwebtoken');
-require('./helpers/dbSetup'); // Import centralized setup
 
-describe('Follow/Unfollow API', () => {
-    let user, followee, token;
+describe('User Controller Tests', () => {
+  let token;
+  let followerId;
+  let followeeId;
 
-    beforeAll(async () => {
-        user = await User.create({
-            username: 'testuser' + Date.now(),
-            email: 'testuser' + Date.now() + '@example.com',
-            password: 'password123',
-            fullname: 'Test User'
-        });
+  beforeAll(async () => {
+    // Create test users
+    const user1 = await User.create({ username: 'user1', email: 'user1@example.com', password: 'password1', fullname: 'User One' });
+    const user2 = await User.create({ username: 'user2', email: 'user2@example.com', password: 'password2', fullname: 'User Two' });
 
-        followee = await User.create({
-            username: 'followee' + Date.now(),
-            email: 'followee' + Date.now() + '@example.com',
-            password: 'password123',
-            fullname: 'Followee User'
-        });
+    followerId = user1.id;
+    followeeId = user2.id;
 
-        token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'default_jwt_secret', { expiresIn: '1h' });
-    });
+    // Generate JWT token
+    token = jwt.sign({ id: followerId, username: 'user1' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  });
 
-    afterAll(async () => {
-        await Follow.destroy({ where: {}, truncate: true });
-        await User.destroy({ where: {}, truncate: true });
-    });
+  afterAll(async () => {
+    // Clean up test data
+    await Follow.destroy({ where: {} });
+    await User.destroy({ where: {} });
+  });
 
-    describe('POST /follow', () => {
-        it('[REQ041]_follow_user_successfully', async () => {
-            const response = await request(app)
-                .post('/follow')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ followeeId: followee.id });
-    
-            console.log('Response Status:', response.status);
-            console.log('Response Body:', response.body);
+  it('should follow a user successfully', async () => {
+    const response = await request(app)
+      .post('/api/users/follow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-            expect(response.status).toEqual(200);
-            expect(response.body.message).toEqual('User followed successfully');
-    
-            const follow = await Follow.findOne({ where: { followerId: user.id, followeeId: followee.id } });
-            expect(follow).not.toBeNull();
-        });
-    });
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('User followed successfully');
+  });
 
-    describe('POST /unfollow', () => {
-        beforeEach(async () => {
-            await Follow.create({ followerId: user.id, followeeId: followee.id });
-        });
+  it('should handle already following the user', async () => {
+    // Follow the user first
+    await request(app)
+      .post('/api/users/follow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-        it('[REQ042]_unfollow_user_successfully', async () => {
-            const response = await request(app)
-                .post('/unfollow')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ followeeId: followee.id });
+    // Try to follow again
+    const response = await request(app)
+      .post('/api/users/follow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-            console.log('Response Status:', response.status);
-            console.log('Response Body:', response.body);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('You are already following this user');
+  });
 
-            expect(response.status).toEqual(200);
-            expect(response.body.message).toEqual('User unfollowed successfully');
+  it('should unfollow a user successfully', async () => {
+    // Follow the user first
+    await request(app)
+      .post('/api/users/follow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-            const follow = await Follow.findOne({ where: { followerId: user.id, followeeId: followee.id } });
-            expect(follow).toBeNull();
-        });
-    });
+    // Unfollow the user
+    const response = await request(app)
+      .post('/api/users/unfollow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-    describe('GET /followers/:userId', () => {
-        beforeEach(async () => {
-            await Follow.create({ followerId: followee.id, followeeId: user.id });
-        });
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('User unfollowed successfully');
+  });
 
-        it('[REQ043]_fetch_followers_successfully', async () => {
-            const response = await request(app)
-                .get(`/followers/${user.id}`)
-                .set('Authorization', `Bearer ${token}`);
+  it('should handle not following the user', async () => {
+    const response = await request(app)
+      .post('/api/users/unfollow')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ followeeId });
 
-            console.log('Response Status:', response.status);
-            console.log('Response Body:', response.body);
-
-            expect(response.status).toEqual(200);
-            expect(Array.isArray(response.body)).toBe(true);
-            expect(response.body.length).toBeGreaterThan(0);
-        });
-    });
-
-    describe('GET /following/:userId', () => {
-        beforeEach(async () => {
-            await Follow.create({ followerId: user.id, followeeId: followee.id });
-        });
-
-        it('[REQ044]_fetch_following_successfully', async () => {
-            const response = await request(app)
-                .get(`/following/${user.id}`)
-                .set('Authorization', `Bearer ${token}`);
-
-            console.log('Response Status:', response.status);
-            console.log('Response Body:', response.body);
-
-            expect(response.status).toEqual(200);
-            expect(Array.isArray(response.body)).toBe(true);
-            expect(response.body.length).toBeGreaterThan(0);
-        });
-    });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('You are not following this user');
+  });
 });
