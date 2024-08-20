@@ -72,61 +72,6 @@ const getAllPost = async (req, res) => {
     }
 }
 
-const getPostById = async (req, res) => {
-    const { postId } = req.params;
-
-    try {
-        const post = await Post.findOne({
-            where: { id: postId },
-            include: [
-                {
-                    model: User,
-                    as: "postedBy",
-                    attributes: ["username"]
-                },
-                {
-                    model: Like,
-                    as: "likes",
-                    attributes: ["userId"]
-                },
-                {
-                    model: Comment,
-                    as: "comments",
-                    attributes: []
-                }
-            ],
-            attributes: {
-                include: [
-                    [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"]
-                ]
-            },
-            group: ["Post.id", "postedBy.id"]
-        });
-
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" });
-        }
-
-        const formattedPost = {
-            id: post.id,
-            profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
-            username: post.postedBy.username,
-            time: post.createdAt,
-            postImg: post.image,
-            likeCount: post.likes.length,
-            commentCount: post.getDataValue("commentCount"),
-            likedByUserIds: post.likes.map(like => like.userId),
-            caption: post.caption
-        };
-
-        res.status(200).json(formattedPost);
-    } catch (error) {
-        console.log("Error fetching post by ID: " + error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-
 const likePost = async (req, res) => {
     try {
         const { postId } = req.body;
@@ -269,4 +214,4 @@ const deletePost = async (req, res) => {
     }
 }
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, getComments, addComment, deletePost,getPostById }
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, getComments, addComment, deletePost }
