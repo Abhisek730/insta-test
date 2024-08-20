@@ -17,11 +17,10 @@ jasmine.addReporter(new SpecReporter({
 // require('./createPostSpec.js');
 // require('./authorizeUserSpec.js');
 // require('./getAllPostSpec.js');
-// require("./getProfileSpec.js");
-// require("./likeUnlikeSpec.js");
-// require("./commentSpec.js");
-// require("./deletePostSpec.js");
-require("./followUnfollowSpec.js");
-
+// require("./getProfileSpec.js")
+// require("./likeUnlikeSpec.js")
+// require("./commentSpec.js")
+// require("./deletePostSpec.js")
+require("./followUnfollowSpec.js")
 // Run the tests
 jasmine.execute();

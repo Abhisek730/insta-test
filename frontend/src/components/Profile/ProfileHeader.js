@@ -1,21 +1,66 @@
-
-
 import React, { useState } from "react";
 
 const ProfileHeader = ({ username, userId, postCount }) => {
     const currentUsername = localStorage.getItem("username");
-    const [isFollowing, setIsFollowing] = useState(false);
+    const API_URL = window.location.origin.replace("3000", "4000");
+    const [isFollowing, setIsFollowing] = useState(false); // Default to not following
+
+    const handleFollow = async () => {
+        try {
+            const token = localStorage.getItem("token");
     
-
-    const handleFollow = () => {
-        // Logic to follow the user
-        setIsFollowing(true);
+            const response = await fetch(`${API_URL}/api/users/follow/${userId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            console.log('Response Status:', response.status); // Log the status code
+    
+            const data = await response.json();
+            console.log('Response Data:', data); // Log the response data
+    
+            if (response.ok) {
+                setIsFollowing(true);
+            } else {
+                alert(`Failed to follow user: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Follow Error:', error); // Log any errors
+            alert("An error occurred while following the user.");
+        }
     };
-
-    const handleUnfollow = () => {
-        // Logic to unfollow the user
-        setIsFollowing(false);
+    
+    const handleUnfollow = async () => {
+        try {
+            const token = localStorage.getItem("token");
+    
+            const response = await fetch(`${API_URL}/api/users/unfollow/${userId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            console.log('Response Status:', response.status); // Log the status code
+    
+            const data = await response.json();
+            console.log('Response Data:', data); // Log the response data
+    
+            if (response.ok) {
+                setIsFollowing(false);
+            } else {
+                alert(`Failed to unfollow user: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Unfollow Error:', error); // Log any errors
+            alert("An error occurred while unfollowing the user.");
+        }
     };
+    
 
     return (
         <div className="flex items-center p-4">
@@ -42,6 +87,9 @@ const ProfileHeader = ({ username, userId, postCount }) => {
 };
 
 export default ProfileHeader;
+
+
+
 
 
 

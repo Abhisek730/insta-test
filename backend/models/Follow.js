@@ -19,7 +19,10 @@ const Follow = sequelize.define("Follow", {
             model: User,
             key: 'id'
         }
-    }
+    },
+
+}, {
+    timestamps: true
 });
 
 

@@ -5,7 +5,7 @@ const Post = require('../models/Post');
 const Like = require('../models/Like');
 const { app } = require('../app');
 const jwt = require('jsonwebtoken');
-require('./helpers/dbSetup');
+require('./helpers/dbSetup'); // Import centralized setup
 
 describe('Like/Unlike API', () => {
     let user;

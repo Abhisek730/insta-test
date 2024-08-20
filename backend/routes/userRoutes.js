@@ -10,13 +10,10 @@ router.post("/register", userController.registerUser);
 router.post("/login", userController.loginUser);
 
 router.get("/profile", authorizeUser, profileController.getProfile);
-// router.get("/profile/:username", authorizeUser, profileController.getUserProfileById);
 router.get("/profile/:username", profileController.getUserProfileByUsername);
-
-router.post("/follow", authorizeUser, userController.followUser);
-router.post("/unfollow", authorizeUser, userController.unfollowUser);
-router.get("/followers/:userId", userController.getFollowers);
-router.get("/following/:userId", userController.getFollowing);
+// Follow/Unfollow routes (with followeeId as URL parameter)
+router.post("/follow/:followeeId", authorizeUser, profileController.followUser);
+router.post("/unfollow/:followeeId", authorizeUser, profileController.unfollowUser);
 
 
 module.exports = router
