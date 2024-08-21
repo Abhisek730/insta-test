@@ -1,5 +1,5 @@
 const { where } = require("sequelize");
-const { Post, User, Like, Comment, sequelize } = require("../models");
+const { Post, User, Like, Follow, Comment, sequelize } = require("../models");
 const { body, validationResult, Result } = require("express-validator");
 
 const validateCreatePost = [
@@ -221,11 +221,11 @@ const getFollowingPosts = async (req, res) => {
         // Find all the users the current user is following
         const followingUsers = await Follow.findAll({
             where: { followerId: userId },
-            attributes: ["followingId"]
+            attributes: ["followeeId"] // Use followeeId
         });
 
         // Extract the following user IDs
-        const followingUserIds = followingUsers.map(follow => follow.followingId);
+        const followingUserIds = followingUsers.map(follow => follow.followeeId);
 
         // Fetch posts from the users the current user is following
         const posts = await Post.findAll({
@@ -274,5 +274,7 @@ const getFollowingPosts = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+
 
 module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, getComments, addComment, deletePost, getFollowingPosts }

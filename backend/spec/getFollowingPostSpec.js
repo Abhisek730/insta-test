@@ -1,7 +1,7 @@
-const request = require('supertest');
 const User = require('../models/User');
 const Post = require('../models/Post');
 const Follow = require('../models/Follow');
+const request = require('supertest');
 const { app } = require('../app');
 const jwt = require('jsonwebtoken');
 require('./helpers/dbSetup'); // Import centralized setup
@@ -10,7 +10,6 @@ describe('Following Posts API', () => {
     let user;
     let followingUser;
     let token;
-    let followingUserToken;
 
     beforeAll(async () => {
         try {
@@ -50,13 +49,12 @@ describe('Following Posts API', () => {
             ]);
 
             console.log('Follower ID:', user.id);
-console.log('Following User ID:', followingUser.id);
+            console.log('Following User ID:', followingUser.id);
 
-    
             // Follow the following user
             await Follow.create({
                 followerId: user.id,
-                followingId: followingUser.id
+                followeeId: followingUser.id // Use followeeId
             });
         } catch (error) {
             console.error('Error during beforeAll setup:', error);
@@ -64,7 +62,6 @@ console.log('Following User ID:', followingUser.id);
         }
     });
     
-
     beforeEach(async () => {
         // Ensure no posts are left over from previous tests
         await Post.destroy({ truncate: true, cascade: true });
@@ -88,8 +85,12 @@ console.log('Following User ID:', followingUser.id);
         ]);
 
         const response = await request(app)
-            .get('/api/following-posts')
+            .get('/api/posts/following-posts')
             .set('Authorization', `Bearer ${token}`);
+
+            console.log("response res", response);
+            console.log("token res", token);
+            
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(jasmine.arrayContaining([
@@ -118,7 +119,15 @@ console.log('Following User ID:', followingUser.id);
         ]));
     });
 
-   
+    it('[REQXXX]_fetch_no_posts_when_not_following', async () => {
+    // Ensure no posts are available if not following anyone
+    const response = await request(app)
+        .get('/api/posts/following-posts')
+        .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+});
 });
 
 
@@ -131,12 +140,3 @@ console.log('Following User ID:', followingUser.id);
 
 
 
-// it('[REQXXX]_fetch_no_posts_when_not_following', async () => {
-//     // Ensure no posts are available if not following anyone
-//     const response = await request(app)
-//         .get('/api/following-posts')
-//         .set('Authorization', `Bearer ${followingUserToken}`);
-
-//     expect(response.status).toBe(200);
-//     expect(response.body).toEqual([]);
-// });

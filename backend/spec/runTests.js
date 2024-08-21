@@ -23,6 +23,6 @@ jasmine.addReporter(new SpecReporter({
 // require("./deletePostSpec.js")
 // require("./followUnfollowSpec.js")
 // require("./profilePhotoUserSpec.js")
-require("./getFollowingPost")
+require("./getFollowingPostSpec")
 // Run the tests
 jasmine.execute();
