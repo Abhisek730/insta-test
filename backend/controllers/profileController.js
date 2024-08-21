@@ -175,6 +175,62 @@ const unfollowUser = async (req, res) => {
 };
 
 
+// Update Profile Photo
+const updateProfilePhoto = async (req, res) => {
+    try {
+        const userId = req.user.id; // Extract user ID from token
+        const { profilePhoto } = req.body;
+
+        // Update user's profile photo in the database
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.profilePhoto = profilePhoto;
+        await user.save();
+
+        // Respond with updated user info
+        res.status(200).json({
+            success: true,
+            message: 'Profile photo updated successfully',
+            user: { profilePhoto: user.profilePhoto }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+// Delete Profile Photo
+const deleteProfilePhoto = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        user.profilePhoto = null; // Clear the profile photo URL
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile photo deleted successfully",
+            user: {
+                id: user.id,
+                username: user.username,
+                profilePhoto: user.profilePhoto, // Return the updated profilePhoto field
+            }
+        });
+    } catch (error) {
+        console.error("Error deleting profile photo:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
 
 
-module.exports = { getProfile, getUserProfileByUsername, unfollowUser, followUser }
+
+
+
+module.exports = { getProfile, getUserProfileByUsername, unfollowUser, followUser, updateProfilePhoto, deleteProfilePhoto }

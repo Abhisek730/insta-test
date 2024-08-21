@@ -21,6 +21,8 @@ jasmine.addReporter(new SpecReporter({
 // require("./likeUnlikeSpec.js")
 // require("./commentSpec.js")
 // require("./deletePostSpec.js")
-require("./followUnfollowSpec.js")
+// require("./followUnfollowSpec.js")
+// require("./profilePhotoUserSpec.js")
+require("./getFollowingPost")
 // Run the tests
 jasmine.execute();

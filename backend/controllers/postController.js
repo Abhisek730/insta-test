@@ -214,4 +214,65 @@ const deletePost = async (req, res) => {
     }
 }
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, getComments, addComment, deletePost }
+const getFollowingPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Find all the users the current user is following
+        const followingUsers = await Follow.findAll({
+            where: { followerId: userId },
+            attributes: ["followingId"]
+        });
+
+        // Extract the following user IDs
+        const followingUserIds = followingUsers.map(follow => follow.followingId);
+
+        // Fetch posts from the users the current user is following
+        const posts = await Post.findAll({
+            where: { userId: followingUserIds },
+            include: [
+                {
+                    model: User,
+                    as: "postedBy",
+                    attributes: ["username"]
+                },
+                {
+                    model: Like,
+                    as: "likes",
+                    attributes: ["userId"]
+                },
+                {
+                    model: Comment,
+                    as: "comments",
+                    attributes: []
+                }
+            ],
+            order: [['createdAt', 'DESC']],
+            attributes: {
+                include: [
+                    [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"]
+                ]
+            },
+            group: ["Post.id", "postedBy.id"]
+        });
+
+        const formattedPosts = posts.map((post) => ({
+            id: post.id,
+            profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
+            username: post.postedBy.username,
+            time: post.createdAt,
+            postImg: post.image,
+            likeCount: post.likes.length,
+            commentCount: post.getDataValue("commentCount"),
+            likedByUserIds: post.likes.map(like => like.userId),
+            caption: post.caption
+        }));
+
+        res.status(200).json(formattedPosts);
+    } catch (error) {
+        console.error("Error fetching posts from following users:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, getComments, addComment, deletePost, getFollowingPosts }
