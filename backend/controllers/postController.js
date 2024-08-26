@@ -219,15 +219,15 @@ const getFollowingPost = async (req, res) => {
     try {
 
         const userId = req.user.id;
-        console.log(userId);
+        // console.log(userId);
         const followingUsers = await Follow.findAll({
             where: { followerId: userId },
         }
         )
-        console.log(followingUsers);
+        // console.log(followingUsers);
 
         const followingUserIds = followingUsers.map((follow) => follow.followeeId);
-        console.log(followingUserIds);
+        // console.log(followingUserIds);
         if (followingUserIds.length === 0) {
             return res.status(200).json([])
         }

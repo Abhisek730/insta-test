@@ -95,7 +95,7 @@ const followUser = async (req, res) => {
     const { followeeId } = req.params;
     const followerId = req.user.id
 
-    console.log(followeeId, followerId);
+    // console.log(followeeId, followerId);
 
     try {
         const followee = await User.findByPk(followeeId);
@@ -142,7 +142,7 @@ const followUser = async (req, res) => {
 const unfollowUser = async (req, res) => {
     const { followeeId } = req.params;
     const followerId = req.user.id
-    console.log(followeeId, followerId);
+    // console.log(followeeId, followerId);
     try {
         const follow = await Follow.findOne({
             where: { followeeId, followerId }

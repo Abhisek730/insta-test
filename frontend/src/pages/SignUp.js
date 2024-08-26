@@ -6,13 +6,15 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-const API_URL = window.location.origin.replace("3000", "5000");
+import { useAuth } from "../context/AuthContext";
+const API_URL = window.location.origin.replace("3000", "4000");
 
 export default function SignUp() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -65,6 +67,63 @@ export default function SignUp() {
       toast.error(err);
     }
   };
+
+  const continueWithGoogle = async (credentialResponse) => {
+    try {
+      // Decode the JWT token received from Google
+      const jwt_details = jwtDecode(credentialResponse.credential);
+      console.log("jwt_details", jwt_details);
+
+      // Extract necessary fields from jwt_details
+      const {
+        email,
+        email_verified,
+        name,
+        sub: clientId,
+        picture: Photo,
+      } = jwt_details;
+
+      // Prepare the username (you may adjust this logic as needed)
+      const username = email.split("@")[0];
+
+      // Call your backend API to log in or register the user
+      const response = await fetch(`${API_URL}/api/users/googleLogin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email_verified,
+          email,
+          name,
+          clientId,
+          username,
+          Photo,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+        if (data.token) {
+          login(data);
+          navigate("/");
+        }
+
+        setEmail("");
+        setPassword("");
+
+        console.log(data);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      console.error("Google Login error:", error);
+      toast.error("Google Login failed. Please try again.");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <ToastContainer />
@@ -131,11 +190,7 @@ export default function SignUp() {
 
             <GoogleLogin
               onSuccess={(credentialResponse) => {
-                console.log(credentialResponse);
-
-                const jwt_details = jwtDecode(credentialResponse.credential);
-                console.log("jwt_details", jwt_details);
-                
+                continueWithGoogle(credentialResponse);
               }}
               onError={() => {
                 console.log("Login Failed");

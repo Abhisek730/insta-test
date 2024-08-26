@@ -83,3 +83,74 @@ describe('User API - Login', () => {
         });
     });
 });
+
+describe('User API - Google Login', () => {
+    beforeEach(async () => {
+        await User.destroy({ truncate: true, cascade: true }); // Clear all users before each test
+    });
+
+    it('[REQ010]_login_or_register_successfully_with_valid_google_credentials', async () => {
+        const validGoogleCredential = {
+            email: 'googleuser@example.com',
+            email_verified: true,
+            name: 'Google User',
+            sub: 'google_client_id',
+            picture: 'https://example.com/photo.jpg'
+        };
+    
+        const response = await request(app)
+            .post('/api/users/googleLogin')
+            .send({
+                email: validGoogleCredential.email,
+                email_verified: validGoogleCredential.email_verified,
+                name: validGoogleCredential.name,
+                clientId: validGoogleCredential.sub,
+                username: 'googleuser',
+                Photo: validGoogleCredential.picture,
+            });
+    
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            user: jasmine.objectContaining({
+                id: jasmine.any(Number),
+                username: jasmine.any(String),
+                fullname: jasmine.any(String),
+                email: jasmine.any(String),
+                // Ignoring other properties
+            }),
+            token: jasmine.any(String),
+            message: 'Registered and Logged in Successfully'
+        });
+    });
+    
+
+    it('[REQ011]_fail_login_with_invalid_google_credentials', async () => {
+        // Simulate an invalid Google credential response
+        const invalidGoogleCredential = {
+            email: 'invaliduser@example.com',
+            email_verified: false, // Email not verified
+            name: 'Invalid User',
+            sub: 'invalid_client_id',
+            picture: 'https://example.com/photo.jpg'
+        };
+
+        const response = await request(app)
+            .post('/api/users/googleLogin')
+            .send({
+                email: invalidGoogleCredential.email,
+                email_verified: invalidGoogleCredential.email_verified,
+                name: invalidGoogleCredential.name,
+                clientId: invalidGoogleCredential.sub,
+                username: 'invaliduser',
+                Photo: invalidGoogleCredential.picture,
+            });
+
+        expect(response.status).toBe(400); // Assuming 400 Bad Request for unverified email
+        expect(response.body).toEqual({
+            error: 'Email not verified'
+        });
+    });
+});
+
+
+
