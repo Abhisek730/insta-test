@@ -9,6 +9,8 @@ const authorizeUser = require("../middlewares/authorizeUser.js");
 router.post("/register", userController.registerUser);
 router.post("/login", userController.loginUser);
 
+router.post("/googleLogin", userController.userGoogleLogin);
+
 router.get("/profile", authorizeUser, profileController.getProfile)
 
 router.get("/profile/:username", profileController.getProfileByUsername)
