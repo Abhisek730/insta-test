@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import GoogleLoginButton from "../components/GoogleLogin/GoogleLoginButton";
 
 const API_URL = window.location.origin.replace("3000", "5000")
 
@@ -101,7 +102,8 @@ export default function SignUp() {
                             <span className="px-4 text-gray-400">OR</span>
                             <div className="flex-grow border-t border-gray-300"></div>
                         </div>
-                        <button className="flex items-center justify-center w-full bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2 rounded-md focus:outline-none focus:ring focus:borde-blue=300">Continue With Google </button>
+                       <GoogleLoginButton>Continue With Google
+                        </GoogleLoginButton>  
                         <div className="mt-4 text-center text-gray-700">
                             <p>Have an account? <Link to={`/signin`}>Log In</Link></p>
                         </div>

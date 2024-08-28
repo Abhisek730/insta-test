@@ -7,6 +7,8 @@ import AppLayout from "./pages/AppLayout";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MyFollowingPost from "./pages/MyFollowingPost";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import CompleteProfile from "./components/GoogleLogin/CompleteProfile";
 
 
 function RoutesComponent() {
@@ -25,6 +27,7 @@ function RoutesComponent() {
           </Route>
           <Route path="/signup" element={isAuthenticated ? <Navigate to="/" /> : <SignUp />}></Route>
           <Route path="/signin" element={isAuthenticated ? <Navigate to="/" /> : <SignIn />}></Route>
+          <Route path="/complete-profile" element={<CompleteProfile />}></Route>
         </Routes>
 
       </div>
@@ -35,10 +38,13 @@ function RoutesComponent() {
 
 function App() {
   console.log("I am app");
+  const clientId = '123816639198-8rf1i31a7sb4l2fq428eee24gg1b378u.apps.googleusercontent.com';
 
   return (
     <AuthProvider>
-      <RoutesComponent></RoutesComponent>
+      <GoogleOAuthProvider clientId={clientId}>
+        <RoutesComponent></RoutesComponent>
+      </GoogleOAuthProvider>
     </AuthProvider>
 
 
@@ -46,85 +52,6 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useState } from 'react';
-// import './App.css';
-// import { Button, Input } from '@chakra-ui/react';
-
-// function App() {
-//     const [count, setCount] = useState(0);
-//     const [isVisible, setIsVisible] = useState(true);
-//     const [inputValue, setInputValue] = useState('');
-
-//     const handleInputChange = (event) => {
-//         setInputValue(event.target.value);
-//     };
-
-//     const applyInputValue = () => {
-//         setCount(parseInt(inputValue, 10) || 0); // Only update if it's a valid number
-//     };
-
-//     return (
-//         <>
-//             <div>
-//                 <Button onClick={() => setIsVisible(!isVisible)}>
-//                     Toggle Counter Visibility
-//                 </Button>
-//                 <Input
-//                     value={inputValue}
-//                     onChange={handleInputChange}
-//                     placeholder="Set counter value"
-//                 />
-//                 <Button
-//                     onClick={applyInputValue}
-//                     className="set-counter-button"
-//                 >
-//                     Set Counter
-//                 </Button>
-//                 <Button onClick={() => setCount(0)}>Reset Counter</Button>
-//             </div>
-//             <h1>Vite + React</h1>
-//             <h2>Vite + h2 + React</h2>
-//             {isVisible && (
-//                 <div className="card">
-//                     <Button
-//                         onClick={() => setCount((count) => count + 1)}
-//                         className="chakra-button"
-//                         backgroundColor="rgb(239, 239, 239)"
-//                     >
-//                         count is {count}
-//                     </Button>
-//                 </div>
-//             )}
-//             <p className="read-the-docs">
-//                 Click on the Vite and React logos to learn more
-//             </p>
-//         </>
-//     );
-// }
-
-// export default App;
-
-
-
-
-
-
-
 
 
 

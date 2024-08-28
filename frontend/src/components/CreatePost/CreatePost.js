@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-// import { supabase } from "../../services/supabaseClient";
-import { supabase } from "../../services/supabaseClientMock";
+import { supabase } from "../../services/supabaseClient";
+// import { supabase } from "../../services/supabaseClientMock";
 
 
 Modal.setAppElement(document.getElementById("root"))

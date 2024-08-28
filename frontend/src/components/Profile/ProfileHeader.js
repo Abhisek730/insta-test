@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import { supabase } from "../../services/supabaseClient";
+import { supabase } from "../../services/supabaseClient";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
